@@ -1,0 +1,46 @@
+name: Arch based machines
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  base:
+    name: Base
+    runs-on: [self-hosted, forrest, arch-base]
+    steps:
+      - name: Set up runner machine
+        run: |
+          sudo localectl set-locale en_US.UTF-8
+          sudo pacman --noconfirm --noprogressbar -Syuu
+          sudo pacman --noconfirm --noprogressbar -S git
+      - name: Persist the disk image
+        env:
+          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
+        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
+        run: |
+          sudo fstrim /
+          echo "$PERSISTENCE_TOKEN" > ~/config/persist
+
+  rust:
+    name: Rust
+    needs: base
+    runs-on: [self-hosted, forrest, arch-rust]
+    steps:
+      - name: Set up runner machine
+        run: |
+          sudo localectl set-locale en_US.UTF-8
+          sudo pacman --noconfirm --noprogressbar -Syuu
+          sudo pacman --noconfirm --noprogressbar -S rustup
+      - name: Install rust nightly toolchain
+        run: rustup toolchain install nightly
+      - name: Install rust stable toolchain
+        run: rustup toolchain install stable
+      - name: Persist the disk image
+        env:
+          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
+        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
+        run: |
+          sudo fstrim /
+          echo "$PERSISTENCE_TOKEN" > ~/config/persist
