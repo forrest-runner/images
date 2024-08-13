@@ -13,6 +13,7 @@ jobs:
       - name: Set up runner machine
         run: |
           sudo localectl set-locale en_US.UTF-8
+          sudo sed -i "s/#IgnorePkg   =/IgnorePkg   = btrfs-progs/" /etc/pacman.conf
           sudo pacman --noconfirm --noprogressbar -Syuu
           sudo pacman --noconfirm --noprogressbar -S git
       - name: Persist the disk image
