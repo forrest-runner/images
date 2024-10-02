@@ -21,13 +21,11 @@ jobs:
           sudo -E apt-get --assume-yes install git
           sudo -E apt-get --assume-yes autoremove
           sudo -E apt-get --assume-yes clean
+
       - name: Persist the disk image
-        env:
-          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
-        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
-        run: |
-          sudo fstrim /
-          echo "$PERSISTENCE_TOKEN" > ~/config/persist
+        uses: forrest-runner/persist@main
+        with:
+          token: ${{ secrets.PERSISTENCE_TOKEN }}
 
   yocto:
     name: Yocto
@@ -44,10 +42,8 @@ jobs:
           sudo -E apt-get --assume-yes install build-essential chrpath diffstat gawk git lz4
           sudo -E apt-get --assume-yes autoremove
           sudo -E apt-get --assume-yes clean
+
       - name: Persist the disk image
-        env:
-          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
-        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
-        run: |
-          sudo fstrim /
-          echo "$PERSISTENCE_TOKEN" > ~/config/persist
+        uses: forrest-runner/persist@main
+        with:
+          token: ${{ secrets.PERSISTENCE_TOKEN }}

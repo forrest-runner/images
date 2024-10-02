@@ -17,13 +17,11 @@ jobs:
           sudo sed -i "s/#IgnorePkg   =/IgnorePkg   = btrfs-progs/" /etc/pacman.conf
           sudo pacman --noconfirm --noprogressbar -Syuu
           sudo pacman --noconfirm --noprogressbar -S git
+
       - name: Persist the disk image
-        env:
-          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
-        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
-        run: |
-          sudo fstrim /
-          echo "$PERSISTENCE_TOKEN" > ~/config/persist
+        uses: forrest-runner/persist@main
+        with:
+          token: ${{ secrets.PERSISTENCE_TOKEN }}
 
   rust:
     name: Rust
@@ -35,14 +33,14 @@ jobs:
           sudo localectl set-locale en_US.UTF-8
           sudo pacman --noconfirm --noprogressbar -Syuu
           sudo pacman --noconfirm --noprogressbar -S rustup
+
       - name: Install rust nightly toolchain
         run: rustup toolchain install nightly
+
       - name: Install rust stable toolchain
         run: rustup toolchain install stable
+
       - name: Persist the disk image
-        env:
-          PERSISTENCE_TOKEN: ${{ secrets.PERSISTENCE_TOKEN }}
-        if: ${{ env.PERSISTENCE_TOKEN != ''  }}
-        run: |
-          sudo fstrim /
-          echo "$PERSISTENCE_TOKEN" > ~/config/persist
+        uses: forrest-runner/persist@main
+        with:
+          token: ${{ secrets.PERSISTENCE_TOKEN }}
